@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint App</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        canvas { border: 1px solid black; cursor: crosshair; background: white; }
+        .controls { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Paint Application</h1>
+    <canvas id="paintCanvas" width="500" height="400"></canvas>
+    <div class="controls">
+        <button onclick="setMode('pencil')">Pencil</button>
+        <button onclick="setMode('eraser')">Eraser</button>
+        <input type="range" id="brushSize" min="1" max="10" value="3">
+        <button onclick="clearCanvas()">Clear</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("paintCanvas");
+        const ctx = canvas.getContext("2d");
+        let painting = false;
+        let mode = "pencil";
+        let color = "black";
+
+        function startPosition(e) {
+            painting = true;
+            draw(e);
+        }
+
+        function endPosition() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+            ctx.lineWidth = document.getElementById("brushSize").value;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = mode === "eraser" ? "white" : color;
+
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
+
+        function setMode(selectedMode) {
+            mode = selectedMode;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        canvas.addEventListener("mousedown", startPosition);
+        canvas.addEventListener("mouseup", endPosition);
+        canvas.addEventListener("mousemove", draw);
+    </script>
+</body>
+</html>
